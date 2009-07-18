@@ -116,6 +116,8 @@ namespace SubSonic.Extensions
 
         protected override Expression VisitBinary(BinaryExpression b)
         {
+            b = ConvertVbCompareString(b);
+
             current = new Constraint();
 
             if(b.NodeType == ExpressionType.AndAlso)
