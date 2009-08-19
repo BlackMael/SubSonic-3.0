@@ -163,8 +163,11 @@ namespace SubSonic.Extensions
                 {
                     Type valueType = rdr.GetValue(i).GetType();
                     if(valueType == typeof(Boolean))
-                        currentProp.SetValue(item, (rdr.GetValue(i).ToString() == "1"), null);
-                    else if (currentProp.PropertyType == typeof(Guid))
+                    {
+                        string value = rdr.GetValue(i).ToString();
+                        currentProp.SetValue(item, value == "1" || value == "True", null);
+                    }
+                    else if(currentProp.PropertyType == typeof(Guid))
                         currentProp.SetValue(item, rdr.GetGuid(i), null);
                     else
                         currentProp.SetValue(item, rdr.GetValue(i).ChangeTypeTo(valueType), null);
@@ -173,7 +176,10 @@ namespace SubSonic.Extensions
                 {
                     Type valueType = rdr.GetValue(i).GetType();
                     if(valueType == typeof(Boolean))
-                        currentField.SetValue(item, (rdr.GetValue(i).ToString() == "1"));
+                    {
+                        string value = rdr.GetValue(i).ToString();
+                        currentField.SetValue(item, value == "1" || value == "True");
+                    }
                     else if(currentField.FieldType == typeof(Guid))
                         currentField.SetValue(item, rdr.GetGuid(i));
                     else
@@ -332,7 +338,7 @@ namespace SubSonic.Extensions
                 var ar = item as IActiveRecord;
                 foreach(var dirty in ar.GetDirtyColumns())
                 {
-                    if(!dirty.IsPrimaryKey)
+                    if(!dirty.IsPrimaryKey && !dirty.IsReadOnly)
                         query.Set(dirty.Name).EqualTo(settings[dirty.Name]);
                 }
             }
@@ -343,7 +349,7 @@ namespace SubSonic.Extensions
                     IColumn col = tbl.GetColumn(key);
                     if(col != null)
                     {
-                        if(!col.IsPrimaryKey)
+                        if(!col.IsPrimaryKey && !col.IsReadOnly)
                             query.Set(col).EqualTo(settings[key]);
                     }
                 }
@@ -379,7 +385,7 @@ namespace SubSonic.Extensions
                     IColumn col = tbl.GetColumn(key);
                     if(col != null)
                     {
-                        if(!col.AutoIncrement)
+                        if(!col.AutoIncrement && !col.IsReadOnly)
                             query.Value(col.QualifiedName, hashed[key], col.DataType);
                     }
                 }
