@@ -59,7 +59,7 @@ namespace SubSonic.Repository
             {
                 if(rdr.Read())
                 {
-                    rdr.Load(item);
+                    rdr.Load(item,null);//mike added null as ColumnNames not known
                     loaded = true;
                 }
                 rdr.Dispose();
@@ -82,7 +82,7 @@ namespace SubSonic.Repository
             {
                 if(rdr.Read())
                 {
-                    rdr.Load(item);
+                    rdr.Load(item,null);//mike added null as ColumnNames not known
                     loaded = true;
                 }
                 rdr.Dispose();
@@ -141,7 +141,7 @@ namespace SubSonic.Repository
             if(!sortBy.EndsWith(" desc", StringComparison.InvariantCultureIgnoreCase))
                 qry.OrderAsc(sortBy);
             else
-                qry.OrderDesc(sortBy.Replace(" desc", ""));
+                qry.OrderDesc(sortBy.FastReplace(" desc", ""));
 
             var list = qry.ExecuteTypedList<T>();
 
